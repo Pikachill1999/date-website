@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我們的約會 💕</title>
+  <style>
+    :root {
+      --bg-a: #fff1f5;
+      --bg-b: #fdf2f8;
+      --card: rgba(255,255,255,.9);
+      --text: #452a35;
+      --muted: #946b7a;
+      --pink: #ec4899;
+      --pink-dark: #db2777;
+      --pink-soft: #fce7f3;
+      --border: #fbcfe8;
+      --shadow: 0 22px 60px rgba(190,24,93,.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 26px 16px 60px;
+      overflow-x: hidden;
+      font-family: "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 12%, rgba(255,255,255,.95), transparent 25%),
+        radial-gradient(circle at 85% 8%, rgba(255,255,255,.72), transparent 24%),
+        linear-gradient(145deg, var(--bg-a), var(--bg-b));
+    }
+
+    .app {
+      width: min(100%, 720px);
+      margin: 0 auto;
+    }
+
+    .top {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      font-size: 52px;
+      animation: heartbeat 1.8s infinite;
+    }
+
+    .top h1 {
+      margin: 6px 0;
+      font-size: clamp(30px, 6vw, 46px);
+    }
+
+    .top p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .poke-ball {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      position: relative;
+      background: linear-gradient(#ef4444 0 46%, #222 46% 54%, #f8fafc 54% 100%);
+      border: 3px solid #222;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      animation: wobble 2.8s ease-in-out infinite;
+    }
+
+    .poke-ball::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #222;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    .poke-ball::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    .trainer-note {
+      margin: 14px auto 0;
+      width: fit-content;
+      max-width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #222;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 13px;
+      box-shadow: 3px 3px 0 #222;
+    }
+
+    .progress-wrap {
+      margin: 20px 0 16px;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.75);
+      overflow: hidden;
+      border: 1px solid rgba(251,207,232,.8);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f472b6, #ec4899);
+      transition: width .45s ease;
+    }
+
+    .panel {
+      position: relative;
+      min-height: 470px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 5vw, 42px);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .step {
+      display: none;
+      animation: stepIn .5s ease both;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .step-icon {
+      font-size: 56px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .step h2 {
+      text-align: center;
+      font-size: clamp(24px, 5vw, 34px);
+      margin: 4px 0 8px;
+    }
+
+    .description {
+      text-align: center;
+      color: var(--muted);
+      margin: 0 auto 28px;
+      max-width: 540px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .choice-grid.three {
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+
+    @media (min-width: 620px) {
+      .choice-grid.three {
+        grid-template-columns: repeat(3, minmax(0,1fr));
+      }
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .choice {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 18px;
+      padding: 16px 12px;
+      cursor: pointer;
+      transition: .2s ease;
+      min-height: 74px;
+    }
+
+    .choice:hover {
+      transform: translateY(-2px);
+      border-color: var(--pink);
+      box-shadow: 0 10px 25px rgba(236,72,153,.1);
+    }
+
+    .choice.selected {
+      border-color: var(--pink);
+      background: var(--pink-soft);
+      box-shadow: 0 0 0 3px rgba(236,72,153,.1);
+    }
+
+    .main-btn {
+      border: 2px solid #222;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      font-weight: 700;
+      border-radius: 18px;
+      padding: 15px 26px;
+      cursor: pointer;
+      min-width: 140px;
+      box-shadow: 4px 4px 0 #222, 0 12px 28px rgba(219,39,119,.16);
+      transition: .2s ease;
+    }
+
+    .main-btn:hover {
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--muted);
+      border-radius: 18px;
+      padding: 15px 26px;
+      cursor: pointer;
+      min-width: 140px;
+    }
+
+    .intro-actions {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      min-height: 150px;
+      margin-top: 10px;
+    }
+
+    #noBtn {
+      transition: left .15s ease, top .15s ease, transform .15s ease;
+    }
+
+    .date-box {
+      width: min(100%, 380px);
+      margin: 26px auto 0;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    input[type="date"] {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: var(--text);
+      font-size: 17px;
+      outline: none;
+    }
+
+
+    .select-box {
+      width: min(100%, 380px);
+      margin: 26px auto 0;
+    }
+
+    .select-box label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .time-select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 17px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .time-select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(236,72,153,.12);
+    }
+
+    .continue-wrap {
+      margin-top: 22px;
+      text-align: center;
+    }
+
+    .back-row {
+      margin-top: 26px;
+      text-align: center;
+    }
+
+    .back-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 8px 12px;
+    }
+
+    .summary-card {
+      margin: 22px auto 0;
+      max-width: 520px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.85);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      background: white;
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .summary-row span:first-child {
+      color: var(--muted);
+    }
+
+    .success-title {
+      font-size: clamp(34px, 7vw, 52px) !important;
+    }
+
+    .success-heart {
+      font-size: 78px;
+      text-align: center;
+      animation: popHeart .8s ease both, heartbeat 1.8s .8s infinite;
+    }
+
+
+    .pikachu-runner {
+      position: fixed;
+      left: -120px;
+      bottom: 18px;
+      z-index: 40;
+      pointer-events: none;
+      animation: runAcross 16s linear infinite;
+    }
+
+    .pikachu-sprite {
+      display: block;
+      width: 96px;
+      height: auto;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 8px 8px rgba(0,0,0,.12));
+      animation: pikaBounce .45s ease-in-out infinite alternate;
+    }
+
+    .pikachu-speech {
+      position: absolute;
+      left: 38px;
+      top: -28px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.96);
+      border: 2px solid #222;
+      font-size: 12px;
+      font-weight: 700;
+      color: #7c2d12;
+      box-shadow: 3px 3px 0 rgba(34,34,34,.85);
+      white-space: nowrap;
+      animation: speechPop 2.4s ease-in-out infinite;
+    }
+
+    @keyframes runAcross {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 220px)); }
+    }
+
+    @keyframes pikaBounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+
+    @keyframes speechPop {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-2px) scale(1.04); }
+    }
+
+
+    .jirachi-floater {
+      position: fixed;
+      left: 14px;
+      top: 88px;
+      z-index: 41;
+      pointer-events: none;
+      animation: jirachiDrift 12s ease-in-out infinite alternate;
+    }
+
+    .jirachi-sprite {
+      display: block;
+      width: 92px;
+      height: auto;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.14));
+      animation: jirachiGlow 2.2s ease-in-out infinite alternate;
+    }
+
+    .jirachi-speech {
+      position: absolute;
+      right: 12px;
+      top: -28px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.96);
+      border: 2px solid #222;
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      box-shadow: 3px 3px 0 rgba(34,34,34,.85);
+      white-space: nowrap;
+      animation: speechPop 2.8s ease-in-out infinite;
+    }
+
+    .jirachi-star {
+      position: absolute;
+      font-size: 18px;
+      animation: twinkle 1.8s ease-in-out infinite;
+      opacity: .95;
+    }
+
+    .jirachi-star.s1 { left: -8px; top: 16px; animation-delay: 0s; }
+    .jirachi-star.s2 { right: -10px; top: 40px; animation-delay: .5s; }
+    .jirachi-star.s3 { left: 32px; bottom: -8px; animation-delay: 1s; }
+
+    @keyframes jirachiDrift {
+      0% {
+        transform: translateX(0) translateY(0) rotate(-2deg);
+      }
+      25% {
+        transform: translateX(calc(25vw - 20px)) translateY(-12px) rotate(2deg);
+      }
+      50% {
+        transform: translateX(calc(50vw - 45px)) translateY(-18px) rotate(-2deg);
+      }
+      75% {
+        transform: translateX(calc(75vw - 70px)) translateY(-10px) rotate(2deg);
+      }
+      100% {
+        transform: translateX(calc(100vw - 130px)) translateY(0) rotate(-2deg);
+      }
+    }
+
+    @keyframes jirachiGlow {
+      0% { transform: scale(1); filter: drop-shadow(0 8px 10px rgba(0,0,0,.12)); }
+      100% { transform: scale(1.04); filter: drop-shadow(0 10px 14px rgba(250,204,21,.22)); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { transform: scale(.8); opacity: .5; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    @media (max-width: 640px) {
+      .jirachi-floater {
+        top: 72px;
+        animation: jirachiDriftMobile 9s ease-in-out infinite alternate;
+      }
+
+      .jirachi-sprite {
+        width: 72px;
+      }
+
+      .jirachi-speech {
+        font-size: 11px;
+        right: 0;
+      }
+    }
+
+    @keyframes jirachiDriftMobile {
+      0% {
+        transform: translateX(0) translateY(0);
+      }
+      50% {
+        transform: translateX(calc(50vw - 36px)) translateY(-12px);
+      }
+      100% {
+        transform: translateX(calc(100vw - 88px)) translateY(0);
+      }
+    }
+
+    .tiny {
+      text-align: center;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .floating-heart {
+      position: fixed;
+      bottom: -40px;
+      pointer-events: none;
+      z-index: 999;
+      animation: floatUp 3.5s ease-in forwards;
+    }
+
+    .shake {
+      animation: shake .35s ease;
+    }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      20% { transform: scale(1.12); }
+      40% { transform: scale(1); }
+      60% { transform: scale(1.08); }
+    }
+
+    @keyframes popHeart {
+      0% { transform: scale(.3) rotate(-12deg); opacity: 0; }
+      70% { transform: scale(1.18) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); }
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0); opacity: 0; }
+      12% { opacity: 1; }
+      100% { transform: translateY(-115vh) rotate(28deg); opacity: 0; }
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0deg); }
+      12% { transform: rotate(-8deg); }
+      24% { transform: rotate(8deg); }
+      36% { transform: rotate(-5deg); }
+      48% { transform: rotate(5deg); }
+      60% { transform: rotate(0deg); }
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="jirachi-floater" aria-hidden="true">
+    <div class="jirachi-speech">Wish granted! ⭐</div>
+    <span class="jirachi-star s1">✨</span>
+    <span class="jirachi-star s2">⭐</span>
+    <span class="jirachi-star s3">✨</span>
+    <img
+      class="jirachi-sprite"
+      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/385.gif"
+      alt=""
+    >
+  </div>
+
+  <div class="pikachu-runner" aria-hidden="true">
+    <div class="pikachu-speech">Pika Pika! ⚡</div>
+    <img
+      class="pikachu-sprite"
+      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"
+      alt=""
+    >
+  </div>
+
+  <main class="app">
+    <header class="top">
+      <div class="poke-ball" aria-hidden="true"></div>
+      <h1>我們的約會</h1>
+      <p>今天的約會，由妳決定 ✨</p>
+      <div class="trainer-note">TRAINER MISSION：完成今天的約會任務 💗</div>
+    </header>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-text">
+        <span id="progressLabel">準備開始</span>
+        <span id="progressCount">0 / 5</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <section class="panel">
+
+      <!-- Step 0 -->
+      <div class="step active" data-step="0">
+        <div class="step-icon">⚡💗</div>
+        <h2>這週要不要跟我約會？</h2>
+        <p class="description">野生的「約會邀請」出現了！要接受挑戰嗎？ 😌</p>
+
+        <div class="intro-actions" id="introActions">
+          <button type="button" class="main-btn" id="yesBtn">接受挑戰！ ⚡</button>
+          <button type="button" class="secondary-btn" id="noBtn">逃跑 😈</button>
+        </div>
+
+        <p class="description" id="noMessage" aria-live="polite"></p>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="step" data-step="1">
+        <div class="step-icon">🗺️</div>
+        <h2>選擇冒險日期</h2>
+        <p class="description">挑一天出發，開始我們今天的約會冒險 💗</p>
+
+        <div class="date-box">
+          <input id="dateInput" type="date" aria-label="選擇約會日期">
+        </div>
+
+        <div class="continue-wrap">
+          <button type="button" class="main-btn" id="dateNext">下一步 →</button>
+        </div>
+
+        <div class="back-row">
+          <button type="button" class="back-btn" data-back="0">← 上一步</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step" data-step="2">
+        <div class="step-icon">⏰</div>
+        <h2>選擇出發時間</h2>
+        <p class="description">選一個整點集合時間，準備出發！</p>
+
+        <div class="select-box">
+          <label for="timeSelect">約會時間</label>
+          <select id="timeSelect" class="time-select">
+            <option value="">請選擇時間</option>
+            <option value="都可可">都可可 💕</option>
+            <option value="00:00">00:00</option>
+            <option value="01:00">01:00</option>
+            <option value="02:00">02:00</option>
+            <option value="03:00">03:00</option>
+            <option value="04:00">04:00</option>
+            <option value="05:00">05:00</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+            <option value="22:00">22:00</option>
+            <option value="23:00">23:00</option>
+          </select>
+        </div>
+
+        <div class="continue-wrap">
+          <button type="button" class="main-btn" id="timeNext">下一步 →</button>
+        </div>
+
+        <div class="back-row">
+          <button type="button" class="back-btn" data-back="1">← 上一步</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step" data-step="3">
+        <div class="step-icon">🍱</div>
+        <h2>補充體力要吃什麼？</h2>
+        <p class="description">冒險前先補滿 HP，今天想吃哪一種？</p>
+
+        <div class="choice-grid three" id="foodChoices">
+          <button type="button" class="choice" data-value="燒肉 🥩">🥩 燒肉</button>
+          <button type="button" class="choice" data-value="火鍋 🍲">🍲 火鍋</button>
+          <button type="button" class="choice" data-value="日式料理 🍣">🍣 日式料理</button>
+          <button type="button" class="choice" data-value="義大利料理 🍝">🍝 義大利料理</button>
+          <button type="button" class="choice" data-value="韓式料理 🍗">🍗 韓式料理</button>
+          <button type="button" class="choice" data-value="甜點咖啡 🍰">🍰 甜點咖啡</button>
+          <button type="button" class="choice" data-value="你決定！ 💕">💕 你決定！</button>
+        </div>
+
+        <div class="back-row">
+          <button type="button" class="back-btn" data-back="2">← 上一步</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step" data-step="4">
+        <div class="step-icon">⭐</div>
+        <h2>下一個任務是什麼？</h2>
+        <p class="description">主線任務完成後，選一個支線活動吧 ✨</p>
+
+        <div class="choice-grid three" id="activityChoices">
+          <button type="button" class="choice" data-value="看電影 🎬">🎬 看電影</button>
+          <button type="button" class="choice" data-value="散步聊天 🌙">🌙 散步聊天</button>
+          <button type="button" class="choice" data-value="逛街 🛍️">🛍️ 逛街</button>
+          <button type="button" class="choice" data-value="喝咖啡 ☕">☕ 喝咖啡</button>
+          <button type="button" class="choice" data-value="拍大頭貼 📸">📸 拍大頭貼</button>
+          <button type="button" class="choice" data-value="一起耍廢 🏠">🏠 一起耍廢</button>
+        </div>
+
+        <div class="back-row">
+          <button type="button" class="back-btn" data-back="3">← 上一步</button>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step" data-step="5">
+        <div class="step-icon">🎒</div>
+        <h2>冒險隊伍確認</h2>
+        <p class="description">裝備確認完畢，這就是我們今天的約會行程 ❤️</p>
+
+        <div class="summary-card">
+          <div class="summary-row"><span>📅 日期</span><strong id="sumDate"></strong></div>
+          <div class="summary-row"><span>⏰ 時間</span><strong id="sumTime"></strong></div>
+          <div class="summary-row"><span>🍴 餐廳</span><strong id="sumFood"></strong></div>
+          <div class="summary-row"><span>🎡 活動</span><strong id="sumActivity"></strong></div>
+        </div>
+
+        <div class="continue-wrap">
+          <button type="button" class="main-btn" id="confirmBtn">出發！⚡💕</button>
+        </div>
+
+        <div class="back-row">
+          <button type="button" class="back-btn" data-back="4">← 我想改一下</button>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div class="step" data-step="6">
+        <div class="success-heart">❤️</div>
+        <h2 class="success-title">約會捕捉成功！</h2>
+        <p class="description">
+          Great！這場約會已經成功收服 😌<br>
+          那天記得準時出現，一起出發冒險吧。
+        </p>
+
+        <div class="summary-card">
+          <div class="summary-row"><span>📅 Date</span><strong id="finalDate"></strong></div>
+          <div class="summary-row"><span>⏰ Time</span><strong id="finalTime"></strong></div>
+          <div class="summary-row"><span>🍴 Food</span><strong id="finalFood"></strong></div>
+          <div class="summary-row"><span>💞 Date</span><strong id="finalActivity"></strong></div>
+        </div>
+
+        <div class="continue-wrap" style="display:grid; gap:12px;">
+          <button type="button" class="main-btn" id="shareBtn">把結果傳給男友 💌</button>
+          <button type="button" class="secondary-btn" id="restartBtn">再選一次 ↻</button>
+        </div>
+
+        <p class="description" id="shareMessage" aria-live="polite" style="margin-top:16px;"></p>
+      </div>
+
+    </section>
+
+    <p class="tiny">Made with ❤️ just for you</p>
+  </main>
+
+  <script>
+    const state = {
+      date: "",
+      time: "",
+      food: "",
+      activity: ""
+    };
+
+    let currentStep = 0;
+    let noAttempts = 0;
+
+    const steps = [...document.querySelectorAll(".step")];
+    const progressWrap = document.getElementById("progressWrap");
+    const progressBar = document.getElementById("progressBar");
+    const progressLabel = document.getElementById("progressLabel");
+    const progressCount = document.getElementById("progressCount");
+
+    const labels = {
+      0: "準備開始",
+      1: "選擇日期",
+      2: "選擇時間",
+      3: "選擇餐廳",
+      4: "選擇活動",
+      5: "最後確認",
+      6: "約會成功 ❤️"
+    };
+
+    function showStep(stepNumber) {
+      currentStep = stepNumber;
+
+      steps.forEach(step => {
+        step.classList.toggle(
+          "active",
+          Number(step.dataset.step) === stepNumber
+        );
+      });
+
+      if (stepNumber === 6) {
+        progressWrap.style.display = "none";
+      } else {
+        progressWrap.style.display = "block";
+        const completed = Math.max(0, stepNumber);
+        progressBar.style.width = `${Math.min(completed / 5 * 100, 100)}%`;
+        progressLabel.textContent = labels[stepNumber];
+        progressCount.textContent = `${completed} / 5`;
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("yesBtn").addEventListener("click", () => {
+      showStep(1);
+    });
+
+    const noBtn = document.getElementById("noBtn");
+    const noMessage = document.getElementById("noMessage");
+    const introActions = document.getElementById("introActions");
+
+    const noTexts = [
+      "逃跑失敗！😳",
+      "對方速度太快了，無法逃跑 😈",
+      "訓練家，妳確定要放棄這場約會嗎？",
+      "看來只能接受挑戰了 ⚡💕"
+    ];
+
+    function moveNoButton() {
+      noAttempts++;
+      noMessage.textContent =
+        noTexts[Math.min(noAttempts - 1, noTexts.length - 1)];
+
+      const area = introActions.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+
+      const maxX = Math.max(0, area.width - btn.width - 8);
+      const maxY = Math.max(0, area.height - btn.height - 8);
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = `${Math.random() * maxX}px`;
+      noBtn.style.top = `${Math.random() * maxY}px`;
+    }
+
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("click", moveNoButton);
+    noBtn.addEventListener("touchstart", (event) => {
+      event.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+    const dateInput = document.getElementById("dateInput");
+    const now = new Date();
+    const todayLocal = new Date(
+      now.getTime() - now.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+    dateInput.min = todayLocal;
+
+    document.getElementById("dateNext").addEventListener("click", () => {
+      if (!dateInput.value) {
+        dateInput.closest(".date-box").classList.add("shake");
+        setTimeout(() => {
+          dateInput.closest(".date-box").classList.remove("shake");
+        }, 380);
+        return;
+      }
+
+      const date = new Date(dateInput.value + "T00:00:00");
+      state.date =
+        `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2,"0")}/${String(date.getDate()).padStart(2,"0")}`;
+
+      showStep(2);
+    });
+
+    const timeSelect = document.getElementById("timeSelect");
+
+    document.getElementById("timeNext").addEventListener("click", () => {
+      if (!timeSelect.value) {
+        timeSelect.classList.add("shake");
+        setTimeout(() => timeSelect.classList.remove("shake"), 380);
+        return;
+      }
+
+      state.time = timeSelect.value;
+      showStep(3);
+    });
+
+    function bindChoices(containerId, key, nextStep) {
+      const container = document.getElementById(containerId);
+      const buttons = [...container.querySelectorAll(".choice")];
+
+      buttons.forEach(button => {
+        button.addEventListener("click", () => {
+          buttons.forEach(btn => btn.classList.remove("selected"));
+          button.classList.add("selected");
+          state[key] = button.dataset.value;
+
+          setTimeout(() => {
+            if (nextStep === 5) updateSummary();
+            showStep(nextStep);
+          }, 240);
+        });
+      });
+    }
+
+    bindChoices("foodChoices", "food", 4);
+    bindChoices("activityChoices", "activity", 5);
+
+    document.querySelectorAll("[data-back]").forEach(button => {
+      button.addEventListener("click", () => {
+        showStep(Number(button.dataset.back));
+      });
+    });
+
+    function updateSummary() {
+      document.getElementById("sumDate").textContent = state.date;
+      document.getElementById("sumTime").textContent = state.time;
+      document.getElementById("sumFood").textContent = state.food;
+      document.getElementById("sumActivity").textContent = state.activity;
+    }
+
+    document.getElementById("confirmBtn").addEventListener("click", () => {
+      document.getElementById("finalDate").textContent = state.date;
+      document.getElementById("finalTime").textContent = state.time;
+      document.getElementById("finalFood").textContent = state.food;
+      document.getElementById("finalActivity").textContent = state.activity;
+
+      showStep(6);
+      createHearts();
+    });
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const shareMessage = document.getElementById("shareMessage");
+
+      const shareText =
+`💕 約會決定好啦！
+
+📅 日期：${state.date}
+⏰ 時間：${state.time}
+🍴 吃什麼：${state.food}
+🎡 活動：${state.activity}
+
+準備好帶我出去玩吧 ❤️`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "我們的約會 💕",
+            text: shareText
+          });
+          shareMessage.textContent = "已開啟分享選單 💌";
+        } catch (error) {
+          if (error && error.name !== "AbortError") {
+            shareMessage.textContent = "分享沒有成功，可以再試一次 💕";
+          }
+        }
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareMessage.textContent = "這個瀏覽器不支援分享選單，已幫妳複製約會內容 💕";
+      } catch (error) {
+        shareMessage.textContent = "這個瀏覽器不支援自動分享，請截圖傳給男友 💌";
+      }
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      state.date = "";
+      state.time = "";
+      state.food = "";
+      state.activity = "";
+      dateInput.value = "";
+      timeSelect.value = "";
+      noAttempts = 0;
+      noMessage.textContent = "";
+      document.getElementById("shareMessage").textContent = "";
+      noBtn.removeAttribute("style");
+
+      document.querySelectorAll(".choice").forEach(btn => {
+        btn.classList.remove("selected");
+      });
+
+      showStep(0);
+    });
+
+    function createHearts() {
+      const hearts = ["💗","💖","💕","💓","💘","❤️"];
+
+      for (let i = 0; i < 30; i++) {
+        const heart = document.createElement("div");
+        heart.className = "floating-heart";
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = `${Math.random() * 100}vw`;
+        heart.style.fontSize = `${18 + Math.random() * 28}px`;
+        heart.style.animationDelay = `${Math.random() * 1.1}s`;
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 5000);
+      }
+    }
+  </script>
+</body>
+</html>
